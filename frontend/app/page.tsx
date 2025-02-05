@@ -32,12 +32,14 @@ const Dashboard: React.FC = () => {
     });
 
     socket.on('temperature_reading', (data: Reading) => {
+      console.log('temperature_reading ', data);
       setCurrentTemperature(data.temperature);
       setLastUpdate(new Date(data.timestamp).toLocaleTimeString());
       setRecentReadings((prev) => [data, ...prev.slice(0, 4)]);
     });
 
     socket.on('processed_reading', (data: Reading) => {
+      console.log('processed_reading ', data);
       setRecentReadings((prev) =>
         prev.map((reading) =>
           reading.id === data.id ? { ...reading, ...data } : reading

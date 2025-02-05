@@ -1,0 +1,93 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "temperature-alert",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "values": {
+          "value": [
+            {
+              "name": "status",
+              "value": "={{$json[\"temperature\"] > 25 ? \"HIGH\" : \"NORMAL\"}}"
+            },
+            {
+              "name": "processedAt",
+              "value": "={{$now}}"
+            }
+          ]
+        },
+        "name": "Set Status and Timestamp",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 1,
+        "position": [400, 300]
+      }
+    },
+    {
+      "parameters": {
+        "operation": "return",
+        "values": {
+          "value": [
+            {
+              "name": "id",
+              "value": "={{$json[\"id\"]}}"
+            },
+            {
+              "name": "temperature",
+              "value": "={{$json[\"temperature\"]}}"
+            },
+            {
+              "name": "status",
+              "value": "={{$json[\"status\"]}}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{$json[\"timestamp\"]}}"
+            },
+            {
+              "name": "processedAt",
+              "value": "={{$json[\"processedAt\"]}}"
+            }
+          ]
+        },
+        "name": "Return Processed Data",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 1,
+        "position": [600, 300]
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set Status and Timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Status and Timestamp": {
+      "main": [
+        [
+          {
+            "node": "Return Processed Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

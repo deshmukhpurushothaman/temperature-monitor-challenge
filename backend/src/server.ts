@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import { Temperature } from './models/temperature.model';
 import temperatureRoutes from './routes/temperature.routes';
+import { processReading } from './services/temperature.service';
 
 dotenv.config();
 
@@ -52,7 +53,13 @@ setInterval(async () => {
   const newReading = new Temperature({ temperature, timestamp });
   await newReading.save();
 
-  io.emit('temperature_reading', { id: newReading.id, temperature, timestamp });
+  const processedReading = await processReading(
+    newReading.id,
+    newReading.temperature,
+    newReading.timestamp
+  );
+
+  io.emit('temperature_reading', processedReading);
 }, 1000 * 5);
 
 // Start HTTP Server

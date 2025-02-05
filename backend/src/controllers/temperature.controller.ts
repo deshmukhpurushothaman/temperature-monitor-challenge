@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { processReading } from '../services/temperature.service';
+import axios from 'axios';
 
 export const processTemperatureReading = async (
   req: any,
@@ -17,6 +18,19 @@ export const processTemperatureReading = async (
 
     // Call service to process the temperature reading
     const updatedReading = await processReading(id, temperature, timestamp);
+
+    // if (updatedReading.status === 'HIGH') {
+    // const response = await axios.post(
+    //   'http://n8n:5678/webhook/temperature-alert',
+    //   {
+    //     id,
+    //     temperature,
+    //     timestamp,
+    //   }
+    // );
+    // }
+    // console.log('n8n response ', response);
+    // const updatedReading = response.data;
 
     // Emit processed reading event to WebSocket clients
     req.io.emit('processed_reading', updatedReading);
