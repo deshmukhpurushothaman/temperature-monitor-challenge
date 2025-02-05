@@ -2,8 +2,11 @@ import express from 'express';
 import { connectToDatabase } from './database/connect';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import dotenv from 'dotenv';
 import { Temperature } from './models/temperature.model';
 import temperatureRoutes from './routes/temperature.routes';
+
+dotenv.config();
 
 // Environment Variables
 const PORT = process.env.PORT || 5000;
