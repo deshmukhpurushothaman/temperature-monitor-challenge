@@ -2,7 +2,6 @@ import express from 'express';
 import { connectToDatabase } from './database/connect';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { v4 as uuidv4 } from 'uuid';
 import { Temperature } from './models/temperature.model';
 import temperatureRoutes from './routes/temperature.routes';
 
@@ -13,9 +12,6 @@ const app = express();
 app.use(express.json());
 
 connectToDatabase();
-
-// Routes
-app.use('/api', temperatureRoutes);
 
 const httpServer = createServer(app);
 
@@ -32,6 +28,9 @@ app.use((req: any, res, next) => {
   next();
 });
 
+// Routes
+app.use('/api', temperatureRoutes);
+
 io.on('connection', (socket) => {
   console.log('A client connected via WebSocket ', socket.id); // Logs connection
   socket.emit('connection_ack', {
@@ -46,13 +45,12 @@ io.on('connection', (socket) => {
 setInterval(async () => {
   const temperature = parseFloat((15 + Math.random() * 15).toFixed(2)); // Random temperature (15-30°C)
   const timestamp = new Date();
-  const id = uuidv4();
 
-  const newReading = new Temperature({ id, temperature, timestamp });
+  const newReading = new Temperature({ temperature, timestamp });
   await newReading.save();
 
-  io.emit('temperature_reading', { id, temperature, timestamp });
-}, 2000);
+  io.emit('temperature_reading', { id: newReading.id, temperature, timestamp });
+}, 1000 * 5);
 
 // Start HTTP Server
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
