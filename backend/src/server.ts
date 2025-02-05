@@ -60,7 +60,7 @@ setInterval(async () => {
   );
 
   io.emit('temperature_reading', processedReading);
-}, 1000 * 5);
+}, 1000 * 2);
 
 // Start HTTP Server
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
