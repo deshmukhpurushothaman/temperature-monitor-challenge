@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { Temperature } from './models/temperature.model';
+import temperatureRoutes from './routes/temperature.routes';
 
 // Environment Variables
 const PORT = process.env.PORT || 5000;
@@ -13,6 +14,9 @@ app.use(express.json());
 
 connectToDatabase();
 
+// Routes
+app.use('/api', temperatureRoutes);
+
 const httpServer = createServer(app);
 
 // WebSocket Server
@@ -20,6 +24,12 @@ const io = new Server(httpServer, {
   cors: {
     origin: '*',
   },
+});
+
+// Middleware to add WebSocket `io` to the request object
+app.use((req: any, res, next) => {
+  req.io = io; // Attach `io` to request object
+  next();
 });
 
 io.on('connection', (socket) => {

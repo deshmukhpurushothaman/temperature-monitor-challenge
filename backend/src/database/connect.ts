@@ -2,12 +2,11 @@ import mongoose from 'mongoose';
 
 export const connectToDatabase = async () => {
   try {
-    await mongoose.connect(
-      process.env.MONGODB_URL || 'mongodb://localhost:27017/leeloolxp',
-      {
-        serverSelectionTimeoutMS: 10000, // 30 seconds
-      }
-    );
+    const DB_URL =
+      process.env.MONGODB_URL || 'mongodb://localhost:27017/leeloolxp';
+    await mongoose.connect(DB_URL, {
+      serverSelectionTimeoutMS: 10000, // 30 seconds
+    });
 
     console.log('Mongoose connected to MongoDB');
   } catch (error) {
